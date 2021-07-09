@@ -1,39 +1,52 @@
+#Simple User Interface
+#Made by voooltexx
+
 users = []
 password1 = []
-#from Compare import *
-
 
 def add_new_user():
-    print('Create New Username: ')
+    print('Press "E" to Exit')
+    print('Create Username: ')
     while 1:
         username = input()
         flag, user = compare_username(username)
+        if username.upper() == 'E':
+            return
         if not flag:
             break
-        print('This Username Is Not Available! Try Again ')
+        print('This Username Is Not Available! ')
     while 1:
-        print('Create New Password: ')
+        print('Create Password: ')
         password1 = input()
-        if len(password1) > 3:
-            break 
-        print('Password Is Too Short')
+        if password1.upper() == 'E':
+            return
+        if len(password1) < 3:
+            print('Password Must Have At Least 3 Symbols!')
+            continue
     while 1:
         print('Repeat password: ')
         password2 = input()
+        if password1.upper() == 'E':
+            return
         if password1 == password2:
             print('User Added Succesfully!')
             break
         else: 
             print('Incorrect Password! ')
 
-    users.append([username, password1])
+    users.append([username, password1, 0])
     f = open('uidatabase.txt', 'w')
     for user in users:
-        f.write('{} {}\n'.format(user[0], user[1]))
+        f.write('{} {} {}\n'.format(user[0], user[1], 0))
     f.close()
 
 
-def enter():
+def log_in():
+    print('Available Users: ')
+    f = open('uidatabase.txt', 'r')
+    for user in users:
+        print('{}'.format(user[0], '\n'))
+    f.close()
     print('Type Your Username: ')
     while 1:
         flag, user = compare_username(input())
@@ -44,7 +57,7 @@ def enter():
     while 1:
         if compare_password(input(), user):
             break
-    print('Incorrect Password, Try Again')
+        print('Incorrect Password, Try Again:')
     print('Welcome Back, {}!'.format(user[0]))
     while in_user(user):
         continue
@@ -70,6 +83,7 @@ def calculator(user):
     if a.upper() == 'E':
         in_user(user)
     a = float(a)
+    print('Available Actions: +, -, //, *')
     print('Type Action: ')
     sign = input()
     if sign.upper() == 'E':
@@ -87,18 +101,52 @@ def calculator(user):
         print ('The Difference Is ')
         print(a-b)
         calculator(user)
-    elif sign =='*' or 'x':
+    elif sign =='*':
+        print ('The Product Of Digits Is ')
+        print(a*b)
+        calculator(user)
+    elif sign =='//':
         if b==0:
             print ('You Cannot Divide By Zero!')
             calculator(user)
         if b>0 or b<0:
-            print('Product Of Digits is ')
-            print(a*b)
+            print('The Quotient Is ')
+            print(a//b)
             calculator(user)
-    elif sign ==':' or '//':
-        print ('The Quotient Is ')
-        print(a//b)
+    else:
+        print('Wrong Action!')
         calculator(user)
+
+
+def bank(user):
+    print('Welcome To Bank App! Type E to Exit. ')
+    print('Your Balance Is:')
+    print('Choose User You Want Send Money To: ')
+    f = open('uidatabase.txt', 'r')
+    user2 = user
+    while 1:
+        for user in users:
+            print('{}'.format(user[0], '\n'))
+        choice = input()
+        if choice.upper() == 'E':
+            return 1
+        elif choice == user2[0]:
+            print('You Cannot Send Money To Yourself! ')
+            continue
+        elif choice == user[0]:
+            print('Type 1 to Return.')
+            print('Please, Type How Much Money You Want To Send: ')
+            try:
+                money=int(input())
+            except:
+                print('Wrong Number!')
+                continue
+
+        
+
+def bank_balance():
+    pass               
+
 
 
 def get_mod_number(mods):
@@ -125,17 +173,19 @@ def delete_user(user):
         
 
 def in_user(user):
-    in_mods = {'1': change_username,
-              '2': change_password,
-              '3': exit_to_menu,
-              '4': calculator,
-              '5': delete_user}
+    in_mods = {'1': calculator,
+               '2': bank,
+               '3': change_username,
+               '4': change_password,
+               '5': exit_to_menu,
+               '6': delete_user}
 
-    print('1 - Change Username')
-    print('2 - Change Password')
-    print('3 - Exit to Menu')
-    print('4 - Open Calculator')
-    print('5 - Delete User')
+    print('1 - Open Calculator App')
+    print('2 - Open Bank App')
+    print('3 - Change Username')
+    print('4 - Change Password')
+    print('5 - Exit To Menu')
+    print('6 - Delete User')
 
     in_mod = get_mod_number(in_mods)
     if in_mod:
@@ -161,36 +211,43 @@ def change_username(user):
 
 
 def change_password(user):
+    print('If You Want To Exit, Type "E" ')
     while 1:
-        print('if You Want To Exit, Type "Y" or Anything Else To Skip: ')
-        confirm = input()
-        if confirm.upper() == 'Y':
-            return 1
         print('Create New Password: ')
         password1 = input()
+        if password1.upper() == 'E':
+            return 1
         if user[1] != password1:
-            break
-        print('You Cannot Set Existing Password! Try Again Or Type "Y" to Exit.')
-    f = open('uidatabase.txt', 'w')
-    user[1] = password1
-    print('You Have Succesfully Changed Password!')
-    for user in users:
-        f.write('{} {}\n'.format(user[0], user[1]))
-    f.close()
-    return 1
+            f = open('uidatabase.txt', 'w')
+            user[1] = password1
+            print('You Have Succesfully Changed Password!')
+            for user in users:
+                f.write('{} {}\n'.format(user[0], user[1]))
+            f.close()
+            return 0
+        print('You Cannot Set Existing Password!')
+        change_password(user)
 
 
 def exit_to_menu(user):
-    print('See You Again, {}!'.format(user[0]))
-    menu()
+    print('Are You Sure You Want To Exit? Type "yes" or "no"')
+    confirmation = input()
+    if confirmation.lower() == 'yes':         
+        print('See You Again, {}!'.format(user[0]))
+        return 0
+    if confirmation.lower() == 'no':
+        in_user(user)
+    else:
+        print('Wrong Option!')
+        exit_to_menu(user)
 
 
 def menu():
-    mods = {'1': enter,
+    mods = {'1': log_in,
             '2': add_new_user,
             '3': exit}
             
-    print('1 - Enter')
+    print('1 - Log In')
     print('2 - Add New User')
     print('3 - Exit')
 

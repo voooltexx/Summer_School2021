@@ -20,7 +20,7 @@ def add_new_user():
         password1 = input()
         if password1.upper() == 'E':
             return
-        if len(password1) 3:
+        if len(password1) > 3:
             break
         print('Password Must Have At Least 3 Symbols!')
 

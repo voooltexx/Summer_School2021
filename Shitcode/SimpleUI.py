@@ -20,9 +20,10 @@ def add_new_user():
         password1 = input()
         if password1.upper() == 'E':
             return
-        if len(password1) < 3:
-            print('Password Must Have At Least 3 Symbols!')
-            continue
+        if len(password1) 3:
+            break
+        print('Password Must Have At Least 3 Symbols!')
+
     while 1:
         print('Repeat password: ')
         password2 = input()

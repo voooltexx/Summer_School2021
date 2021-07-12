@@ -23,7 +23,6 @@ def add_new_user():
         if len(password1) > 3:
             break
         print('Password Must Have At Least 3 Symbols!')
-
     while 1:
         print('Repeat password: ')
         password2 = input()
@@ -142,6 +141,16 @@ def bank(user):
             except:
                 print('Wrong Number!')
                 continue
+            print('Confirm Sending')
+            print('Type "OK" to Continue or E to Exit')
+            confirmation = input()
+            if confirmation.upper() == 'E':
+                return 1
+            if confirmation.upper() == 'OK':
+                pass
+
+
+            
 
         
 
